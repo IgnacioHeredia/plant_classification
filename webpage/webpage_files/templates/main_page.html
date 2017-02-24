@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Plant app</title>
+<link type= "text/css" rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+	<div class="title">
+		<h1>Automated Plant Recognition</h1> 
+	</div>
+	<div class="container"> 
+  		<form action="." method="POST"> 
+			<div class="embed-submit-field"> 
+   	    	<input type="text" name="url" placeholder="Image url"> 
+   	    	<button name="submit-button" type="submit">Submit</button> 
+			</div> 
+   		</form> 
+	</div> 
+	<br><br>
+	<div class="text"> 
+		<b> Tip: </b> For improved performance you can jointly submit several urls of the same plant (just separate them with a blank space). 
+		<br><br> 
+		Check <a href="label_list.html">here</a> our species database. 
+	</div>
+	<br><br><br>
+	<div class="author"> 
+		Ignacio Heredia (IFCA) | December 2016 
+		<br> 
+		iheredia@ifca.unican.es 
+	</div>
+</body> 
+</html>
+
+
+
