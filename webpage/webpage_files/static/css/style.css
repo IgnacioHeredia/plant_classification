@@ -23,17 +23,19 @@ body {
 }
 .embed-submit-field button {
   position: absolute;
-  right: 10px;
+  right: 8px;
   top: 7px;
   -webkit-appearance: none;
   -moz-appearance: none;
   border: none;
-  background: #ededed;
+  border: 2px solid #7ab4e2;
+  background: #cae4f9;
   border-radius: 3px;
-  padding: 10px;
+  padding: 8px;
   transition: all .2s;
 }
 .embed-submit-field button:hover {
+  border: 2px solid #306087;
   background-color: #306087;
   color: #fff;
   cursor: pointer;
@@ -67,14 +69,15 @@ text-align: center;
   display:block;
   -webkit-appearance: none;
   -moz-appearance: none;
-  border: none;
+  border: 2px solid #7ab4e2;
   background: #cae4f9;
   border-radius: 3px;
-  padding: 10px;
+  padding: 8px;
   transition: all .2s;
 }
 
 .new-query button:hover {
+  border: 2px solid #306087;
   background-color: #306087;
   color: #fff;
   cursor: pointer;

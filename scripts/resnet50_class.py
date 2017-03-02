@@ -18,7 +18,8 @@ import collections
 import inspect
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+homedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(os.path.join(homedir, 'scripts'))
 from data_utils import iterate_minibatches, data_augmentation
 
 import theano
@@ -112,7 +113,7 @@ class prediction_net(object):
         target_var = T.ivector('y')  # shape (batchsize,)
 
         # Load model weights and metadata
-        d = pickle.load(open('/home/ignacio/image_recognition/data/pretrained_weights/resnet50.pkl'))
+        d = pickle.load(open(os.path.join(homedir, 'data', 'pretrained_weights', 'resnet50.pkl')))
 
         # Build the network and fill with pretrained weights except for the last fc layer
         net = build_model(input_var, self.output_dim)
@@ -262,8 +263,8 @@ class prediction_net(object):
 
         if save_model:
             filename = 'resnet50_' + str(self.output_dim) + 'classes_' + str(self.num_epochs) + 'epochs'
-            with open(os.path.join('training_info', filename + '.json'), 'w') as outfile:
+            with open(os.path.join(homedir, 'scripts', 'training_info', filename + '.json'), 'w') as outfile:
                 json.dump(train_info, outfile)
-            np.savez(os.path.join('training_weights', filename + '.npz'), *lasagne.layers.get_all_param_values(net['prob']))
+            np.savez(os.path.join(homedir, 'scripts', 'training_weights', filename + '.npz'), *lasagne.layers.get_all_param_values(net['prob']))
 
         return test_fn

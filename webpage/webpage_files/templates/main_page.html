@@ -10,16 +10,34 @@
 		<h1>Automated Plant Recognition</h1> 
 	</div>
 	<div class="container"> 
-  		<form action="." method="POST"> 
+
+		<center><h3>Submit image url</h3></center> 
+		<br>
+  		<form action="url_upload" method="POST"> 
 			<div class="embed-submit-field"> 
    	    	<input type="text" name="url" placeholder="Image url"> 
    	    	<button name="submit-button" type="submit">Submit</button> 
 			</div> 
    		</form> 
+		<br><br>
+		<center><h3>Submit local image</h3></center> 
+		<br>
+		<form action="local_upload" method="POST" enctype="multipart/form-data">
+		    <center><input type="file" multiple="" name="local_files"></center> 
+			<br>
+			<div class="new-query">
+		    <button name="submit-button" type="submit" class="new-query">Submit</button> 
+			</div> 
+		</form>
+
 	</div> 
-	<br><br>
+	<br><br><br>
 	<div class="text"> 
-		<b> Tip: </b> For improved performance you can jointly submit several urls of the same plant (just separate them with a blank space). 
+		<b> Tip: </b> For improved classification performance you can jointly submit several images of the same observation:
+		<ul>
+			<li>when submiting urls just separate them with a blank space</li>
+			<li>when submitting local images just select them jointly pressing CTRL</li>
+		</ul>
 		<br><br> 
 		Check <a href="label_list.html">here</a> our species database. 
 	</div>
