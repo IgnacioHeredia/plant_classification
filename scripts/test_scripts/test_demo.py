@@ -49,17 +49,17 @@ training_plots(info_file)
 
 splits_dir = os.path.join(homedir, 'data', 'data_splits')
 im_dir = '/media/ignacio/Datos/plant_net/images_ori'
-train = np.genfromtxt(os.path.join(splits_dir, 'train.txt'), dtype='str', delimiter=' ')
-train = train[:100]
-y_train = train[:, -1].astype(np.int32)
-X_train = np.array([os.path.join(im_dir, i) for i in train[:, 0]])
+data = np.genfromtxt(os.path.join(splits_dir, 'train.txt'), dtype='str', delimiter=' ')
+#data = data[:100]
+y_data = data[:, -1].astype(np.int32)
+X_data = np.array([os.path.join(im_dir, i) for i in data[:, 0]])
 
 
 def top5(val, l):
     return val in l[:5]
-pred_lab, pred_prob = test_predictions(test_func, im_list=X_train, aug_params={'mean_RGB': mean_RGB})
-print 'Top1 accuracy: {}%'.format(np.mean(pred_lab[:, 0] == y_train) * 100)
-print 'Top5 accuracy: {}%'.format(np.mean(map(top5, y_train, pred_lab)) * 100)
+pred_lab, pred_prob = test_predictions(test_func, im_list=X_data, aug_params={'mean_RGB': mean_RGB})
+print 'Top1 accuracy: {}%'.format(np.mean(pred_lab[:, 0] == y_data) * 100)
+print 'Top5 accuracy: {}%'.format(np.mean(map(top5, y_data, pred_lab)) * 100)
 
 # %% Predict single local image
 

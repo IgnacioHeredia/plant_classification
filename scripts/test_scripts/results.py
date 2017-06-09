@@ -113,23 +113,36 @@ def plot_matrix(M, labels=None):
     M = np.ma.masked_where(M == 0, M)
     im = ax.imshow(M, interpolation='none', vmin=0.0001, cmap='gray_r', norm=LogNorm(vmin=0.0001, vmax=1.))
     if labels:
-        ax.set_xticks(range(len(labels))), ax.set_yticks(range(len(labels)))
-        ax.set_xticklabels(labels, rotation=90), ax.set_yticklabels(labels)
+        ax.set_xticks(range(len(labels)))
+        ax.set_yticks(range(len(labels)))
+        ax.set_xticklabels(labels, rotation=90)
+        ax.set_yticklabels(labels)
     ax.set_xticks([]), ax.set_yticks([])
-    ax.set_xlabel('True label', fontsize=14), ax.set_ylabel('Predicted label', fontsize=14)
+    ax.set_xlabel('True label', fontsize=14)
+    ax.set_ylabel('Predicted label', fontsize=14)
     fig.colorbar(im, fraction=0.046, pad=0.04)
 
 
 def plot_multi_matrix(M, labels):
     fig, [ax1, ax2] = plt.subplots(1, 2)
     M = np.ma.masked_where(M == 0, M)
-    ax1.imshow(M, interpolation='none', vmin=0)
-    ax1.set_xticks(range(len(labels))), ax1.set_yticks(range(len(labels)))
-    ax1.set_xticklabels(labels, rotation=90), ax1.set_yticklabels(labels)
-    ax2.imshow(M, interpolation='none', vmin=0)
+    
+    ax1.imshow(M, interpolation='none', vmin=0.0001, cmap='gray_r', norm=LogNorm(vmin=0.0001, vmax=1.))
+    ax1.set_xticks(range(len(labels)))
+    ax1.set_yticks(range(len(labels)))
+    ax1.set_xticklabels(labels, rotation=90)
+    ax1.set_yticklabels(labels)
+    
+    ax2.imshow(M, interpolation='none', vmin=0.0001, cmap='gray_r', norm=LogNorm(vmin=0.0001, vmax=1.))
     ax2.yaxis.tick_right()
-    ax2.set_xticks(range(len(labels))), ax2.set_yticks(range(len(labels)))
-    ax2.set_xticklabels(labels, rotation=90), ax2.set_yticklabels(labels)
+    ax2.yaxis.set_ticks_position('both')
+    ax2.set_xticks(range(len(labels)))
+    ax2.set_yticks(range(len(labels)))
+    ax2.set_xticklabels(labels, rotation=90)
+    ax2.set_yticklabels(labels)
+    
+    ax1.set_position([0.2, 0.5, 0.35, 0.35])
+    ax2.set_position([0.41, 0.5, 0.35, 0.35])
 
 #plot_matrix(M, metadata)
 
@@ -175,23 +188,46 @@ ord_spe, ord_fam = list(np.array(ord_spe)[args]), list(np.array(ord_fam)[args])
 M_mapped = M_mapped[:, args][args, :]
 
 labels = [ord_spe[i] + ' | ' + ord_fam[i] for i in range(len(ord_spe))]
+
+##Full matrix plot
 #plot_matrix(M_mapped)
+##plt.savefig('full_matrix.png', dpi=600)
+
+##Zoom plots
+#plot_multi_matrix(M_mapped, labels)
+##plt.savefig('mixing_zoom.png', dpi=600)
 
 M = M_mapped
+
 fig, [ax1, ax2] = plt.subplots(1, 2)
 M = np.ma.masked_where(M == 0, M)
-ax1.imshow(M, interpolation='none', vmin=0.0001, cmap='gray_r', norm=LogNorm(vmin=0.0001, vmax=1.))
+im1 = ax1.imshow(M, interpolation='none', vmin=0.0001, cmap='gray_r', norm=LogNorm(vmin=0.0001, vmax=1.))
 ax1.set_xticks(range(len(labels))), ax1.set_yticks(range(len(labels)))
 ax1.set_xticklabels(labels, rotation=90), ax1.set_yticklabels(labels)
-ax2.imshow(M, interpolation='none', vmin=0.0001, cmap='gray_r', norm=LogNorm(vmin=0.0001, vmax=1.))
+im2 = ax2.imshow(M, interpolation='none', vmin=0.0001, cmap='gray_r', norm=LogNorm(vmin=0.0001, vmax=1.))
 ax2.yaxis.tick_right()
+ax2.yaxis.set_ticks_position('both')
 ax2.set_xticks(range(len(labels))), ax2.set_yticks(range(len(labels)))
 ax2.set_xticklabels(labels, rotation=90), ax2.set_yticklabels(labels)
-#ax1.set_position([0.2, 0.5, 0.35, 0.35])
-#ax2.set_position([0.41, 0.5, 0.35, 0.35])
+
+ax1.set_xlabel('True label', fontsize=14)
+ax1.set_ylabel('Predicted label', fontsize=14, rotation=270, labelpad=20)
+ax1.xaxis.set_label_position('top')
+ax1.yaxis.set_label_position('right')
+
+ax2.set_xlabel('True label', fontsize=14)
+ax2.set_ylabel('Predicted label', fontsize=14)
+ax2.xaxis.set_label_position('top')
+
+cbaxes = fig.add_axes([0.49, 0.5, 0.01, 0.35]) 
+cb = plt.colorbar(im1, cax = cbaxes)  
+
+ax1.set_position([0.2, 0.5, 0.35, 0.35])
+ax2.set_position([0.45, 0.5, 0.35, 0.35])
+
 #plt.savefig('mixing_zoom.png', dpi=600)
 
-# %% Multimage prediction
+# %% Multimage prediction (original)
 
 pred_dict = json.load(open("test_predictions/resnet_predictions_inaturalist_multiimage.json", "rb"))
 pred_dict1 = json.load(open("test_predictions/resnet_predictions_inaturalist.json", "rb"))
@@ -213,19 +249,40 @@ def obs_dict(obs_num, pred_dict):
             'pred_lab': list(new_pred_lab),
             'pred_prob': list(new_pred_prob)}
 
-fig, [ax1, ax2] = plt.subplots(1, 2)
-colors = ['k', 'r', 'b', 'g']
-for i, ims in enumerate([1, 2, 3, 4]):
-    tmp_dict = obs_dict(ims, pred_dict)
-    x, top1, top5, counts = acc_vs_cutoff(tmp_dict)
-    ax1.plot(x, top1, c=colors[i], ls='-')
-    ax1.plot(x, top5, c=colors[i], ls='--')
-    ax2.plot(x, 1. - counts/counts[0], c=colors[i], label='{} images'.format(ims))
+ims_per_obs = [4, 3, 2, 1]
+var_list = []
+for i in ims_per_obs:
+    tmp_dict = obs_dict(i, pred_dict)
+    var_tmp = acc_vs_cutoff(tmp_dict) #[x, top1, top5, counts]
+    var_list.append(var_tmp)
 
-ax1.set_xlabel('Confidence cutoff', fontsize=14)
-ax1.set_ylabel('Accuracy', fontsize=14)
-ax2.set_xlabel('Confidence cutoff', fontsize=14)
-ax2.set_ylabel('Discarded observations', fontsize=14)
-ax2.legend()
+# Reduced one-column image
+
+fig, [ax1, ax2] = plt.subplots(1, 2)
+#colors = ['g', 'm', 'b', 'k'] #colour
+colors = ['#c62f0f', 'g', 'm', 'k'] #colour2
+#colors = ['0.8', '0.5', '0.3', '0.0'] #greyscale
+for i, ims in enumerate(ims_per_obs):
+    x, top1, top5, counts = var_list[i]
+    ax1.plot(x, top1, c=colors[i], ls='-', linewidth=3.0)
+    ax1.plot(x, top5, c=colors[i], ls='--', linewidth=3.0)
+    ax2.plot(x, 1. - counts/counts[0], c=colors[i], ls='-', linewidth=3.0, label='{} images'.format(ims))
+
+fs=18
+ax1.set_xlabel('Confidence cutoff', fontsize=fs)
+ax1.set_ylabel('Accuracy', fontsize=fs)
+ax2.set_xlabel('Confidence cutoff', fontsize=fs)
+ax2.set_ylabel('Discarded observations', fontsize=fs)
+
+leg = ax2.legend(loc='lower right', fontsize=16)
+for legobj in leg.legendHandles:
+    legobj.set_linewidth(3.0)
+
+for ax in [ax1, ax2]:
+    for tick in ax.xaxis.get_major_ticks():
+        tick.label.set_fontsize(16) 
+    for tick in ax.yaxis.get_major_ticks():
+        tick.label.set_fontsize(16) 
+
 
 #plt.savefig('multi_observations.png', dpi=600)

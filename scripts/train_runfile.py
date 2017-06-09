@@ -14,7 +14,7 @@ from my_utils import model_ensembling
 from data_utils import data_splits, meanRGB
 
 tag = False
-im_dir = '/media/ignacio/Datos/plant_net/images_ori'  # absolute path to file_dir
+im_dir = '/media/ignacio/Datos/datasets/plant_net/images_ori'  # absolute path to file_dir
 X_train, y_train, X_val, y_val, metadata = data_splits(im_dir, tag)
 
 if tag:
