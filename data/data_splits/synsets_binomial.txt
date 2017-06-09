@@ -203,7 +203,7 @@ Allium carinatum
 Allium cepa
 Allium chamaemoly
 Allium commutatum
-Allium commutatum
+Allium commutatum x Allium porrum
 Allium cyrilli
 Allium ericetorum
 Allium fistulosum
@@ -317,7 +317,7 @@ Anacamptis fragrans
 Anacamptis laxiflora
 Anacamptis longicornu
 Anacamptis morio
-Anacamptis morio
+Anacamptis morio x Anacamptis papilionacea
 Anacamptis palustris
 Anacamptis papilionacea
 Anacamptis picta
@@ -338,7 +338,7 @@ Anchusa italica
 Anchusa littorea
 Anchusa ochroleuca
 Anchusa officinalis
-Anchusa officinalis
+Anchusa officinalis x Anchusa undulata
 Anchusa procera
 Anchusa undulata
 Anchusella variegata
@@ -570,7 +570,7 @@ Artemisia vulgaris
 Arthrocnemum macrostachyum
 Arum cylindraceum
 Arum italicum
-Arum italicum
+Arum italicum x Arum maculatum
 Arum maculatum
 Arum pictum
 Aruncus dioicus
@@ -2047,7 +2047,7 @@ Epilobium tetragonum
 Epilobium x floridulum
 Epimedium alpinum
 Epipactis atrorubens
-Epipactis atrorubens
+Epipactis atrorubens x Epipactis distans
 Epipactis distans
 Epipactis exilis
 Epipactis helleborine
@@ -3884,7 +3884,7 @@ Ophrys aegirtica
 Ophrys annae
 Ophrys apifera
 Ophrys arachnitiformis
-Ophrys arachnitiformis
+Ophrys arachnitiformis x Ophrys exaltata
 Ophrys araneola
 Ophrys aranifera
 Ophrys aveyronensis
@@ -3892,7 +3892,7 @@ Ophrys aymoninii
 Ophrys bertolonii
 Ophrys bilunulata
 Ophrys bombyliflora
-Ophrys bombyliflora
+Ophrys bombyliflora x Ophrys scolopax
 Ophrys corbariensis
 Ophrys delforgei
 Ophrys druentica
@@ -3914,7 +3914,7 @@ Ophrys morisii
 Ophrys occidentalis
 Ophrys passionis
 Ophrys provincialis
-Ophrys provincialis
+Ophrys provincialis x Ophrys scolopax
 Ophrys pseudoscolopax
 Ophrys saratoi
 Ophrys scolopax
@@ -3950,7 +3950,7 @@ Orchis anthropophora
 Orchis italica
 Orchis langei
 Orchis mascula
-Orchis mascula
+Orchis mascula x Orchis militaris
 Orchis militaris
 Orchis olbiensis
 Orchis pallens
@@ -4617,7 +4617,7 @@ Quamoclit coccinea
 Quercus canariensis
 Quercus castaneifolia
 Quercus cerris
-Quercus cerris
+Quercus cerris x Quercus robur
 Quercus coccifera
 Quercus coccinea
 Quercus crenata
