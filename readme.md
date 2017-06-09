@@ -9,7 +9,7 @@ This repository contains the code used to train a ResNet50 convolutional network
 **Contents**
 - `./data` Data files 
 - `./scripts` Core code
-- `./webpage` Independent folder which contains the indispensable files/functions to run a simple webpage to host your trained net and make predictions. The plant classification app is running at http://193.146.75.221/.
+- `./webpage` Independent folder which contains the indispensable files/functions to run a simple webpage to host your trained net and make predictions. The plant classification app is running at http://deep.ifca.es/.
 
 This has been tested in Ubuntu 14.04 with Python 2.7.12 with the Anaconda 4.2.0 (64-bit) distribution, Theano 0.9.0.dev2 and Lasagne 0.2.dev1.
 
