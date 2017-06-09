@@ -11,15 +11,29 @@
 	</div>
 	<div class="container"> 
 
+		<!-- Error messages. -->
+		{% with flashes = get_flashed_messages() %}
+			{% if flashes %}
+			  {% for message in flashes %}
+				<div id="flashesdiv">
+				{{ message }}
+				</div>
+			  {% endfor %}
+			{% endif %}
+		{% endwith %}
+
+		<!-- Url submissions. -->
 		<center><h3>Submit image url</h3></center> 
 		<br>
-  		<form action="url_upload" method="POST"> 
+ 		<form action="url_upload" method="POST"> 
 			<div class="embed-submit-field"> 
    	    	<input type="text" name="url" placeholder="Image url"> 
    	    	<button name="submit-button" type="submit">Submit</button> 
 			</div> 
    		</form> 
 		<br><br>
+
+		<!-- Local image submissions. -->
 		<center><h3>Submit local image</h3></center> 
 		<br>
 		<form action="local_upload" method="POST" enctype="multipart/form-data">

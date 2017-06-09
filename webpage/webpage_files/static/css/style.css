@@ -82,3 +82,10 @@ text-align: center;
   color: #fff;
   cursor: pointer;
 }
+
+#flashesdiv {
+  background-color: #7a0d0d;
+  color: #fff;
+  padding: 5px; 
+}
+
