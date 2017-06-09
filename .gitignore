@@ -66,4 +66,5 @@ webpage/model_files/data
 webpage/model_files/training_weights
 webpage/model_files/training_info
 webpage/webpage_files/templates/label_list.html
+webpage/webpage_files/secret_key.txt
 
