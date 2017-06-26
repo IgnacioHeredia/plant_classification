@@ -41,7 +41,8 @@ Here are some Python snippets using the `requests` module.
 **Classifying URLs**
 ```python
 im_list = ['https://public-media.smithsonianmag.com/filer/89/47/8947cd5c-ac01-4c0e-891a-505517cc0663/istock-540753808.jpg', 
-			'https://cdn.pixabay.com/photo/2014/04/10/11/24/red-rose-320868_960_720.jpg']
+           'https://cdn.pixabay.com/photo/2014/04/10/11/24/red-rose-320868_960_720.jpg']
+
 r = requests.post('http://127.0.0.1:5000/api', data={'mode':'url', 'url_list':im_list})
 ```
 
@@ -49,7 +50,7 @@ r = requests.post('http://127.0.0.1:5000/api', data={'mode':'url', 'url_list':im
 
 ```python
 im_paths = ['/home/ignacio/image_recognition/data/demo-images/image1.jpg',
-			'/home/ignacio/image_recognition/data/demo-images/image2.jpg']
+            '/home/ignacio/image_recognition/data/demo-images/image2.jpg']
 
 im_names = [str(i) for i in range(len(im_paths))]
 im_files = [open(f, 'rb') for f in im_paths]
