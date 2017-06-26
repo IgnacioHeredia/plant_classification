@@ -43,4 +43,4 @@ cnmem=.75
 The weights of the trained net will be stored in `./scripts/training_weights` (in an `.npz` file) and the training information in `./scripts/training_weights` (in a `.json` file). 
 
 To learn how to use your freshly trained model for making predictions or plotting your training information, take a look at `./scripts/test_scripts/test_demo.py`. 
-If you prefer to have a graphical interface, you can run a simple webpage to query your model. For more info check the [webpage docs](./webpage/webpage_do.md).
+If you prefer to have a graphical interface, you can run a simple webpage to query your model. For more info check the [webpage docs](./webpage/webpage_docs.md).
