@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Plant app</title>
+<link type= "text/css" rel="stylesheet" href="static/css/style.css" }}">
+</head>
+
+<script>
+var predictions = {{ predictions|tojson }};
+var text = "";
+var i;
+for (i = 0; i < predictions.pred_lab.length; i++) {
+ 		text += "              <p>" + (i+1) + ". " + predictions.pred_lab[i]  + " | " + Math.round(predictions.pred_prob[i] * 100) + " %<p>";
+}
+</script>
+
+<body>
+    <div class="title">
+        <h2>Top predicted labels</h2>
+    </div>
+    <div class="container">
+		<p id="show_predictions"></p>
+		<script>
+				document.getElementById("show_predictions").innerHTML = text;	
+		</script>
+    </div>
+    <br><br><br>
+    <form action="/">
+        <div class="new-query">
+        <button name="newquery-button" type="submit">New query</button>
+        </div>
+    </form>
+</body>
+</html>
