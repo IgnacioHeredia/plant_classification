@@ -72,15 +72,15 @@ A successful response should return a json, with the labels and their respective
 
 ```python
 {u'pred_lab': [u'Rosa chinensis [99 images in DB]',
- 			   u'Erythrina crista-galli [35 images in DB]',
- 			   u'Tulipa agenensis [67 images in DB]',
-  			   u'Gladiolus dubius [49 images in DB]',
-			   u'Spathodea campanulata [47 images in DB]'],
+               u'Erythrina crista-galli [35 images in DB]',
+               u'Tulipa agenensis [67 images in DB]',
+               u'Gladiolus dubius [49 images in DB]',
+               u'Spathodea campanulata [47 images in DB]'],
  u'pred_prob': [0.313213586807251,
- 				0.22123542428016663,
-		 	    0.037396140396595,
-		    	0.033636994659900665,
-		 	    0.02710902690887451],
+                0.22123542428016663,
+                0.037396140396595,
+                0.033636994659900665,
+                0.02710902690887451],
  u'status': u'OK'}
 ```
 while unsuccessful responses will look like
