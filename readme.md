@@ -5,6 +5,7 @@
 **Date** February 2017
 
 This repository contains the code used to train a ResNet50 convolutional network on plant classification.
+[Here](http://dl.acm.org/citation.cfm?doid=3075564.3075590) is the paper describing the work ([arxiv version](https://arxiv.org/abs/1706.03736)).
 
 **Contents**
 

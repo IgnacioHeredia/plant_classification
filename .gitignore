@@ -62,9 +62,12 @@ GTAGS
 scripts/test_scripts/test_predictions/buenos
 scripts/training_weights/buenos
 scripts/training_info/buenos
-webpage/model_files/data
-webpage/model_files/training_weights
-webpage/model_files/training_info
+webpage/model_files/data/*
+!webpage/model_files/data/.gitkeep
+webpage/model_files/training_weights/*
+!webpage/model_files/training_weights/.gitkeep
+webpage/model_files/training_info/*
+!webpage/model_files/training_info/.gitkeep
 webpage/webpage_files/templates/label_list.html
 webpage/webpage_files/secret_key.txt
 
