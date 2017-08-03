@@ -1,6 +1,6 @@
 body {
-  background: #eee;
-  font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;
+  background: #f7f7f7;
+  font-family: Verdana, Geneva, sans-serif;;
   box-sizing: border-box;
 }
 
@@ -49,6 +49,7 @@ text-align: center;
 }
 
 
+
 .text {
   width: 600px;
   margin: 0 auto;
@@ -89,3 +90,17 @@ text-align: center;
   padding: 5px; 
 }
 
+#low_confidence_warning {
+font-weight: bold;
+color: #7a0d0d;
+}
+
+#medium_confidence_warning {
+font-weight: bold;
+color: #c67301;
+}
+
+#high_confidence_warning {
+font-weight: bold;
+color: #06873a;
+}
