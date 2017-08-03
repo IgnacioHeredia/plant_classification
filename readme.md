@@ -45,3 +45,20 @@ The weights of the trained net will be stored in `./scripts/training_weights` (i
 
 To learn how to use your freshly trained model for making predictions or plotting your training information, take a look at `./scripts/test_scripts/test_demo.py`. 
 If you prefer to have a graphical interface, you can run a simple webpage to query your model. For more info check the [webpage docs](./webpage/webpage_docs.md).
+### References
+
+[1]: https://arxiv.org/abs/1612.07360
+    
+
+If you find this useful in your work please consider citing:
+```
+@inproceedings{Heredia2017,
+  doi = {10.1145/3075564.3075590},
+  url = {https://doi.org/10.1145/3075564.3075590},
+  year  = {2017},
+  publisher = {{ACM} Press},
+  author = {Ignacio Heredia},
+  title = {Large-Scale Plant Classification with Deep Neural Networks},
+  booktitle = {Proceedings of the Computing Frontiers Conference on {ZZZ}  - {CF}{\textquotesingle}17}
+}
+```
