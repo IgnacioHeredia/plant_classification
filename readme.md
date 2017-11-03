@@ -34,7 +34,8 @@ First you need add to the `./data/data_splits` path the files:
 - `tags.txt`
 
 The `train.txt`, `val.txt` and `test.txt` files associate an image to a label number (that has to *start at zero*). The `synsets.txt` file translates those label numbers to label names. Finally the `tags.txt` enables you to provide a tag to each training image to custom the data augmentation operations you apply to each image (see  the docstring of the `data_augmentation` function in the `./scripts/data_utils.py` file).
-You can find examples of of these files at  `./data/data_splits/dataset_demo`.
+
+You can find examples of these files at  `./data/data_splits/dataset_demo`.
 
 ### 2) Downloading the pretrained model
 You have to download the Lasagne Model Zoo pretrained weights with ImageNet from [here](https://s3.amazonaws.com/lasagne/recipes/pretrained/imagenet/resnet50.pkl) and copy them to `./data/data_splits/pretrained_weights`.
