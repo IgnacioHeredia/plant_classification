@@ -42,7 +42,7 @@ augmentation_demo(im_path)
 
 # %% Plot training information
 
-info_file = os.path.join(homedir, 'scripts', 'training_info', modelname + '.json')
+#info_file = os.path.join(homedir, 'scripts', 'training_info', modelname + '.json')
 training_plots(info_file)
 
 # %% Predict list of local images

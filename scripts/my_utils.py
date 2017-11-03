@@ -60,8 +60,9 @@ def test_predictions(test_func, im_list, aug_params=None, crop_mode='random'):
 
 def single_prediction(test_func, im_list, aug_params=None, crop_mode='random'):
     """
-    Function for identying a SINGLE plant with one or more images and to
-    combine the predictions for all the images to output the best possible labels.
+    Function for identying a SINGLE plant with one or more images.
+    It combines the predictions for all the images to output the best possible 
+    labels overall.
 
     Parameters
     ----------
@@ -102,11 +103,10 @@ def single_prediction(test_func, im_list, aug_params=None, crop_mode='random'):
     return np.array(pred_lab), np.array(pred_prob[args])
 
 
-def model_ensembling(X_train, y_train, X_val=None, y_val=None,
-                     net_params=None, aug_params=None):
+def train_model(X_train, y_train, X_val=None, y_val=None,
+                net_params=None, aug_params=None):
     """
-    Make ensemble average of a net model. Returns the mean and standard deviation
-    accuracy on the training/validation set.
+    Train model
 
     Parameters
     ----------

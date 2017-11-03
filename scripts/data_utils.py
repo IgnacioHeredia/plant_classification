@@ -10,7 +10,7 @@ Date: September 2016
 import os
 import sys
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageEnhance
 import requests
 from io import BytesIO
 import threading
@@ -39,6 +39,8 @@ def data_splits(im_dir='/media/ignacio/Datos/plant_net/images_ori', tag=False):
         Image label number
     metadata : array of strs
         Label names array.
+    tags : array of strs, None
+        Tags names array for the training images.
 
     """
     homedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -51,30 +53,27 @@ def data_splits(im_dir='/media/ignacio/Datos/plant_net/images_ori', tag=False):
 
     # Training splits
     train = np.genfromtxt(os.path.join(splits_dir, 'train.txt'), dtype='str', delimiter=' ')
-    y_train = train[:, -1].astype(np.int32)
-    if tag:
-        X_train = train[:, 0:2].astype(object)
-        X_train[:, 0] = np.array([os.path.join(im_dir, i) for i in X_train[:, 0]])
+    X_train = np.array([os.path.join(im_dir, i) for i in train[:, 0]])
+    y_train = train[:, 1].astype(np.int32)
+    if 'tags.txt' in file_list:
+        tags = np.genfromtxt(os.path.join(splits_dir, 'tags.txt'), dtype='str', delimiter=' ')
+        assert len(X_train) == len(tags), 'You must assign a tag to EVERY training image'
     else:
-        X_train = np.array([os.path.join(im_dir, i) for i in train[:, 0]])
+        tags = None
 
     # Validation splits
     if 'val.txt' in file_list:
         val = np.genfromtxt(os.path.join(splits_dir, 'val.txt'), dtype='str', delimiter=' ')
         y_val = val[:, -1].astype(np.int32)
-        if tag:
-            X_val = val[:, 0:2].astype(object)
-            X_val[:, 0] = np.array([os.path.join(im_dir, i) for i in X_val[:, 0]])
-        else:
-            X_val = np.array([os.path.join(im_dir, i) for i in val[:, 0]])
+        X_val = np.array([os.path.join(im_dir, i) for i in val[:, 0]])
     else:
         print 'Training with no validation data.'
         X_val, y_val = None, None
 
-    return X_train, y_train, X_val, y_val, metadata
+    return X_train, y_train, X_val, y_val, metadata, tags
 
 
-def data_augmentation(im_list, mode='standard', tag=False, params=None, im_size=224,
+def data_augmentation(im_list, mode='standard', tags=None, params=None, im_size=224,
                       filemode='local', mean_RGB=None):
     """
     Perform data augmentation on some image list using PIL.
@@ -85,23 +84,31 @@ def data_augmentation(im_list, mode='standard', tag=False, params=None, im_size=
         Array where the first column is image_path (or image_url). Optionally
         a second column can be the tags of the image.
         Shape (N,) or (N,2)
-    tag : bool
-        If True then im_list is an array with 1st column is filepath
-        and 2nd column is image_tag (eg. for plants we had habit, fruit,
-        flower, bark). You can the manually modify the data_augmentation
-        function to choose which transformations are to be performed to each tag.
-        In a future we could pass a params dict along with each tag.
+    tags : array of strings, None
+        If existing, you can the manually modify the data_augmentation function
+        (by adding an additional condition to the if, like tags[i]=='fruit')
+        to choose which transformations are to be performed to each tag.
     params : dict or None
         Mandatory keys:
         - mirror (bool): allow 50% random mirroring.
-        - rescale ([0,1] float): randomly rescale image parameter.
-        - crop_size ([0,1] float): random crop of size crop_size*original_size.
-        - zoom ([0,1] float): the zoom will be implicitely by rescaling the crop_size.
+        - rotation (bool): allow rotation of [0, 90, 180, 270] degrees.
+        - stretch ([0,1] float): randomly stretch image.
+        - crop ([0,1] float): randomly take an image crop.
+        - zoom ([0,1] float): random zoom applied to crop_size.
+          --> Therefore the effective crop size at each iteration will be a 
+              random number between 1 and crop*(1-zoom). For example:
+                  * crop=1, zoom=0: no crop of the image
+                  * crop=1, zoom=0.1: random crop of random size between 100% image and 90% of the image
+                  * crop=0.9, zoom=0.1: random crop of random size between 90% image and 80% of the image
+                  * crop=0.9, zoom=0: random crop of always 90% of the image
+                  Image size refers to the size of the shortest side.
+        - pixel_noise (bool): allow different pixel transformations like gaussian noise,
+          brightness, color jittering, contrast and sharpness modification.
     mode : {'standard', 'minimal', 'test', None}
         We overwrite the params dict with some defaults augmentation parameters
         - 'minimal': no data augmentation, just resizing
         - 'standard': tipical parameters for data augmentation during training
-        - 'test': minimized data augmentation for testing
+        - 'test': minimized data augmentation for validation/testing
         - None: we do not overwrite the params dict variable
     im_size : int
         Final image size to feed the net's input (eg. 224 for Resnet).
@@ -119,19 +126,18 @@ def data_augmentation(im_list, mode='standard', tag=False, params=None, im_size=
     if mean_RGB is None:
         mean_RGB = np.array([107.59348955,  112.1047813,   80.9982362])
     else:
-        mean_RGB = np.array(mean_RGB)
-    rot_ang = [0, 90, 180, 270]
-    batch = []
-    if tag:
-        tag_list = im_list[:, 1]
-        im_list = im_list[:, 0]
+        mean_RGB = np.array(mean_RGB)   
+
     if mode == 'minimal':
-        params = {'mirror': False, 'rescale': False, 'crop_size': False}
+        params = {'mirror':False, 'rotation':False, 'stretch':False, 'crop':False, 'pixel_noise':False}
     if mode == 'standard':
-        params = {'mirror': True, 'rescale': 0.3, 'zoom': 0.3, 'crop_size': 1.}
+        params = {'mirror':True, 'rotation':True, 'stretch':0.3, 'crop':1., 'zoom':0.3, 'pixel_noise':False}
     if mode == 'test':
-        params = {'mirror': True, 'rescale': 0.1, 'zoom': 0.1, 'crop_size': .9}
+        params = {'mirror':True, 'rotation':True, 'stretch':0.1, 'crop':.9, 'zoom':0.1, 'pixel_noise':False}
+    
+    batch = []
     for i, filename in enumerate(im_list):
+        
         if filemode == 'local':
             im = Image.open(filename)
             im = im.convert('RGB')
@@ -139,37 +145,71 @@ def data_augmentation(im_list, mode='standard', tag=False, params=None, im_size=
             filename = BytesIO(requests.get(filename).content)
             im = Image.open(filename)
             im = im.convert('RGB')
-        if params['mirror'] and np.random.random() > 0.5:
-            im = im.transpose(Image.FLIP_LEFT_RIGHT)
-        if params['mirror'] and tag and tag_list[i] != 'habit':
+                
+        if params['stretch']:
+            stretch = params['stretch']
+            stretch_factor = np.random.uniform(low=1.-stretch/2, high=1.+stretch/2, size=2)
+            im = im.resize((im.size * stretch_factor).astype(int))
+            
+        if params['crop']:
+            effective_zoom = np.random.rand() * params['zoom']
+            crop = params['crop'] - effective_zoom
+            
+            ly, lx = im.size
+            crop_size = crop * min([ly, lx]) 
+            rand_x = np.random.randint(low=0, high=lx-crop_size + 1)
+            rand_y = np.random.randint(low=0, high=ly-crop_size + 1)
+                
+            min_yx = np.array([rand_y, rand_x])
+            max_yx = min_yx + crop_size #square crop
+            im = im.crop(np.concatenate((min_yx, max_yx)))
+            
+        if params['mirror']:
+            if np.random.random() > 0.5:
+                im = im.transpose(Image.FLIP_LEFT_RIGHT)
             if np.random.random() > 0.5:
                 im = im.transpose(Image.FLIP_TOP_BOTTOM)
-            rot = np.random.choice(rot_ang)
+        
+        if params['rotation']:
+            rot = np.random.choice([0, 90, 180, 270])
             if rot == 90:
                 im = im.transpose(Image.ROTATE_90)
             if rot == 180:
                 im = im.transpose(Image.ROTATE_180)
             if rot == 270:
-                im = im.transpose(Image.ROTATE_270)
-        if params['rescale']:
-            rescale = params['rescale']
-            new_scale = np.random.uniform(low=1.-rescale, high=1.+rescale, size=2)
-            im = im.resize((im.size * new_scale).astype(int))
-        if params['crop_size']:
-            zoom = np.random.rand() * params['zoom']
-            crop_size = params['crop_size'] * (1.-zoom)
-            ly, lx = im.size
-            min_side = min([ly, lx])
-            if crop_size == 1:
-                crop_size -= 1e-10  # avoid low=high problem of randint generator
-            if ly > lx:
-                rand_x = np.random.randint(low=0, high=lx*(1.-crop_size))
-                rand_y = np.random.randint(low=0, high=ly-lx*crop_size)
-            else:
-                rand_x = np.random.randint(low=0, high=lx-ly*crop_size)
-                rand_y = np.random.randint(low=0, high=ly*(1.-crop_size))
-            rand_xy = np.array([rand_y, rand_x])
-            im = im.crop(np.concatenate((rand_xy, rand_xy+crop_size*min_side)))
+                im = im.transpose(Image.ROTATE_270)            
+
+        if params['pixel_noise']:
+            
+            #not used by defaul as it does not seem to improve much the performance,
+            #but more than DOUBLES the data augmentation processing time.
+            
+            # Color
+            color_factor = np.random.normal(1, 0.3)  #1: original
+            color_factor = np.clip(color_factor, 0., 2.)
+            im = ImageEnhance.Color(im).enhance(color_factor)
+            
+            # Brightness
+            brightness_factor = np.random.normal(1, 0.2)  #1: original
+            brightness_factor = np.clip(brightness_factor, 0.5, 1.5)
+            im = ImageEnhance.Brightness(im).enhance(brightness_factor)
+            
+            # Contrast
+            contrast_factor = np.random.normal(1, 0.2)  #1: original
+            contrast_factor = np.clip(contrast_factor, 0.5, 1.5)
+            im = ImageEnhance.Contrast(im).enhance(contrast_factor)
+            
+            # Sharpness
+            sharpness_factor = np.random.normal(1, 0.4)  #1: original
+            sharpness_factor = np.clip(sharpness_factor, 0., 1.)
+            im = ImageEnhance.Sharpness(im).enhance(sharpness_factor)
+
+#            # Gaussian Noise #severely deteriorates learning 
+#            im = np.array(im)
+#            noise = np.random.normal(0, 15, im.shape)
+#            noisy_image = np.clip(im + noise, 0, 255).astype(np.uint8)
+#            im = Image.fromarray(noisy_image)
+
         im = im.resize((im_size, im_size))
         batch.append(np.array(im))  # shape (N, 224, 224, 3)
 
@@ -304,10 +344,10 @@ def standard_tencrop_batch(filename, filemode='local', crop_prop=0.8, im_size=22
     return batch.astype(np.float32)
 
 
-def meanRGB(im_list):
+def meanRGB(im_list, verbose=False):
     """
     Returns the mean and std RGB values for the whole dataset.
-    For the plantnet we have:
+    For example in the plantnet dataset we have:
         mean_RGB = np.array([ 107.59348955,  112.1047813 ,   80.9982362 ])
         std_RGB = np.array([ 52.78326119,  50.56163087,  50.86486131])
 
@@ -320,11 +360,13 @@ def meanRGB(im_list):
     print 'Computing mean RGB pixel ...'
     mean, std = np.zeros(3), np.zeros(3)
     for i, filename in enumerate(im_list):
-        # Write completion bar
-        n = 1. * i / len(im_list)
-        sys.stdout.write('\r')
-        sys.stdout.write("[{:20}] {}%".format('='*int(n/0.05), int(100*n)))
-        sys.stdout.flush()
+        
+        if verbose:# Write completion bar
+            n = 1. * i / len(im_list)
+            sys.stdout.write('\r')
+            sys.stdout.write("[{:20}] {}%".format('='*int(n/0.05), int(100*n)))
+            sys.stdout.flush()
+        
         # Process image
         im = np.array(Image.open(filename)).reshape(-1, 3)
         mean += np.mean(im, axis=0)

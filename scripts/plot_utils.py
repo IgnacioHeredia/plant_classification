@@ -63,7 +63,7 @@ def training_plots(info_file, filtering=True):
     plt.legend()
 
 
-def augmentation_demo(filename, it=20):
+def augmentation_demo(filename, it=20, mean_RGB=None):
     """
     Little demo to show how data augmentation is performed on a single image.
 
@@ -75,15 +75,20 @@ def augmentation_demo(filename, it=20):
         Number of examples of data augmentation
 
     """
-    batch = data_augmentation([filename]*it)
+    if mean_RGB is None:
+        mean_RGB = np.array([107.59348955,  112.1047813,   80.9982362])
+    else:
+        mean_RGB = np.array(mean_RGB)  
+    batch = data_augmentation([filename]*it, mean_RGB=mean_RGB)
+    
     plt.ion()
     fig, [ax1, ax2] = plt.subplots(1, 2, num=1)
     ax1.set_title('Original image')
     ax2.set_title('Transformed image')
     image = Image.open(filename)
-    arr = np.asarray(image)
-    ax1.imshow(arr)
-    mean_RGB = np.array([107.59348955, 112.1047813, 80.9982362]).astype(np.float32)
+    ax1.imshow(np.asarray(image))
+    
+    mean_RGB = mean_RGB.astype(np.float32)
     for im in batch:
         im = im[::-1, :, :]
         im = np.transpose(im, (1, 2, 0))

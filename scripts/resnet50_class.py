@@ -180,7 +180,7 @@ class prediction_net(object):
         if X_val is not None:
             val_batchsize = min(len(y_val), self.batchsize)
             val_aug_params = aug_params.copy()
-            val_aug_params.update({'mode': 'minimal'})
+            val_aug_params.update({'mode': 'minimal', 'tags': None})
 
         for epoch in range(self.num_epochs):
 
