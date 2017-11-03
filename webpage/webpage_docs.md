@@ -1,6 +1,6 @@
 # Webpage docs
 
-This is a basic web app to implement image recognition with local files and urls.
+This is a basic web app to implement image recognition with local files and urls. The `./webpage` folder is completelly self-contained and thus can be copied alone to your web server.
 
 **Contents**
 
@@ -9,11 +9,13 @@ This is a basic web app to implement image recognition with local files and urls
 
 ## Preliminaries
 
-For that you have to copy the following files to the webpage folders:
+First you have to copy the following files:
 
 - `synsets.txt` to `./webpage/model_files/data` 
 - your trained weights (`.npz`) to `./webpage/model_files/training_weights`
 - your training info (`.json`) to  `./webpage/model_files/training_info`
+
+You can additionally provide an  `info.txt` file to be put in `./webpage/model_files/data` with relevant information for each specie. 
 
 ## Launching the webpage
 
@@ -76,17 +78,37 @@ curl --form mode=localfile --form 0=@/home/ignacio/image_recognition/data/demo-i
 A successful response should return a json, with the labels and their respective probabilities, like the following
 
 ```python
-{u'pred_lab': [u'Rosa chinensis [99 images in DB]',
-               u'Erythrina crista-galli [35 images in DB]',
-               u'Tulipa agenensis [67 images in DB]',
-               u'Gladiolus dubius [49 images in DB]',
-               u'Spathodea campanulata [47 images in DB]'],
+{u'pred_lab': [u'Rosa chinensis',
+               u'Erythrina crista-galli',
+               u'Tulipa agenensis',
+               u'Gladiolus dubius',
+               u'Spathodea campanulata'],
+               
  u'pred_prob': [0.313213586807251,
                 0.22123542428016663,
                 0.037396140396595,
                 0.033636994659900665,
-                0.02710902690887451],
- u'status': u'OK'}
+                0.02710902690887451], 
+                         
+ u'info': [u'99 images in DB',
+           u'35 images in DB',
+           u'67 images in DB',
+           u'49 images in DB',
+           u'47 images in DB'],
+           
+ u'google_images_link': ['https://www.google.es/search?q=Rosa+chinensis&tbm=isch',
+                         'https://www.google.es/search?q=Erythrina+crista-galli&tbm=isch',
+                         'https://www.google.es/search?q=Tulipa+agenensis&tbm=isch',
+                         'https://www.google.es/search?q=Gladiolus+dubius&tbm=isch',
+                         'https://www.google.es/search?q=Spathodea+campanulata&tbm=isch'],
+                       
+ u'wikipedia_link': [u'https://en.wikipedia.org/wiki/Rosa_chinensis',
+                     u'https://en.wikipedia.org/wiki/Erythrina_crista-galli',
+                     u'https://en.wikipedia.org/wiki/Tulipa_agenensis',
+                     u'https://en.wikipedia.org/wiki/Gladiolus_dubius',
+                     u'https://en.wikipedia.org/wiki/Spathodea_campanulata'],
+                     
+ u'status': u'OK'
 ```
 while unsuccessful responses will look like
 

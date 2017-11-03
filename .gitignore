@@ -59,11 +59,8 @@ GTAGS
 
 # Things specific to this project #
 ###################################
-scripts/test_scripts/test_predictions/buenos
-scripts/training_weights/buenos
-scripts/training_info/buenos
-webpage/model_files/data/*
-!webpage/model_files/data/.gitkeep
+scripts/training_weights/*
+!scripts/training_weights/.gitkeep
 webpage/model_files/training_weights/*
 !webpage/model_files/training_weights/.gitkeep
 webpage/model_files/training_info/*

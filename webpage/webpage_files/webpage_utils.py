@@ -17,9 +17,18 @@ homedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(homedir)
 from model_files.test_utils import load_model, single_prediction
 
-# Loading image species  
-metadata = np.genfromtxt(os.path.join(homedir, 'model_files', 'data', 'synsets.txt'), dtype='str', delimiter='/n')
 
+# Loading label names and label info files 
+synsets = np.genfromtxt(os.path.join(homedir, 'model_files', 'data', 'synsets.txt'), dtype='str', delimiter='/n')
+try:
+    synsets_info = np.genfromtxt(os.path.join(homedir, 'model_files', 'data', 'info.txt'), dtype='str', delimiter='/n')
+except:
+    synsets_info = np.array(['']*len(synsets))
+assert synsets.shape == synsets_info.shape, """
+Your info file should have the same size as the synsets file.
+Blank spaces corresponding to labels with no info should be filled with some string (eg '-').
+You can also choose to remove the info file."""
+    
 # Load training info
 info_files = os.listdir(os.path.join(homedir, 'model_files', 'training_info'))
 info_file_name = [i for i in info_files if i.endswith('.json')][0]
@@ -48,7 +57,7 @@ def catch_url_error(url_list):
         # Error catch: Inexistent url        
         try:
             url_type = requests.head(i).headers.get('content-type')
-        except requests.exceptions.ConnectionError:
+        except:
             error_dict['Error_type'] = 'Failed url connection'
             error_dict['Error_description'] = """Check you wrote the url address correctly."""
             return error_dict
@@ -95,34 +104,67 @@ def print_error(app, message):
         error_message += '<br>{}'.format(message['Error_description'])
     flash(Markup(error_message))
     
+    
+def image_link(pred_lab):
+    """
+    Return link to Google images
+    """
+    base_url = 'https://www.google.es/search?'
+    links = []
+    for i in pred_lab:
+        params = {'tbm':'isch','q':i}
+        url = base_url + requests.compat.urlencode(params) 
+        links.append(url)
+    return links
+
+
+def wikipedia_link(pred_lab):
+    """
+    Return link to wikipedia webpage
+    """
+    base_url = 'https://en.wikipedia.org/wiki/'
+    links = []
+    for i in pred_lab:
+        url = base_url + i.replace(' ', '_')
+        links.append(url)
+    return links
+    
+
+def successful_message(pred_lab, pred_prob):
+    
+    lab_name = synsets[pred_lab].tolist()
+    
+    message = {'pred_lab': lab_name,   
+               'pred_prob':pred_prob.tolist(),
+               'google_images_link': image_link(lab_name),
+               'wikipedia_link': wikipedia_link(lab_name),
+               'info': synsets_info[pred_lab].tolist(),
+               'status': 'OK'}
+    return message
+
 
 def url_prediction(url_list):
-    
-    message = {}
     
     # Catch errors (if any)
     error_message = catch_url_error(url_list)
     if error_message:
-        message['status'] = 'error'
+        message = {'status': 'error'}
         message.update(error_message)      
         return message
     
     # Predict
     pred_lab, pred_prob = single_prediction(test_func, im_list=url_list, aug_params={'mean_RGB': mean_RGB, 'filemode':'url'})
-    pred_dict = {'pred_lab': metadata[pred_lab].tolist(), 'pred_prob':pred_prob.tolist()}
-    message['status'] = 'OK'
-    message.update(pred_dict)
-    return message
+
+    return successful_message(pred_lab, pred_prob)
 
 
 def localfile_prediction(app, uploaded_files):
     
-    message = {}
-    
+
     # Catch errors (if any)
     error_message = catch_localfile_error(app, uploaded_files)
     if error_message:
-        message['status'] = 'error'
+        message = {'status': 'error'}
         message.update(error_message)      
         return message
     
@@ -137,15 +179,12 @@ def localfile_prediction(app, uploaded_files):
                         
     # Predict
     pred_lab, pred_prob = single_prediction(test_func, im_list=filenames, aug_params={'mean_RGB': mean_RGB, 'filemode':'local'})
-    pred_dict = {'pred_lab': metadata[pred_lab].tolist(), 'pred_prob':pred_prob.tolist()}
-    message['status'] = 'OK'
-    message.update(pred_dict)    
 
     # Remove cache images
     for f in filenames:
         os.remove(f)
 
-    return message
+    return successful_message(pred_lab, pred_prob)
 
 
 def label_list_to_html(labels_file):
@@ -161,24 +200,59 @@ def label_list_to_html(labels_file):
     display = """
     <!DOCTYPE html>
     <html lang="en">
+    
     <head>
-    <meta charset="utf-8">
-    <title>Plant app</title>
-    <link type= "text/css" rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <!-- Basic Page Needs
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <meta charset="utf-8">
+        <title>Plant App</title>
+        <meta name="description" content="">
+        <meta name="author" content="">
+        
+        <!-- Mobile Specific Metas
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- FONT
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+        
+        <!-- CSS
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link type= "text/css" rel="stylesheet" href="../static/css/normalize.css">
+        <link type= "text/css" rel="stylesheet" href="../static/css/skeleton.css">
+        <link type= "text/css" rel="stylesheet" href="../static/css/general.css">
+        <link type= "text/css" rel="stylesheet" href="../static/css/custom.css">
+            
     </head>
+    
     <body>
-    <div class="title">
-        <h3>Label list</h3>
-    </div>
-    <div class="container">"""
+    
+    <!-- Primary Page Layout
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <div class="container">
+        <section class="header">
+            <h1 class="center"  style="margin-top: 25%">Automated Plant Recognition</h1>
+        </section>
+        <div class="docs-section">
+            <div class="row">
+              <div class="eight columns offset-by-two column">
+                  
+                  <h4>Labels</h4>
+                  <p id="show_predictions"></p>
+                  <script>document.getElementById("show_predictions").innerHTML = text;</script>
+                  <br>"""
     homedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     labels = np.genfromtxt(os.path.join(homedir, 'model_files', 'data', labels_file), dtype='str', delimiter='/n')
     labels = np.insert(labels, np.arange(len(labels)) + 1, '<br>')
-    display += " ".join(labels)
-    display += """
+    display += " ".join(labels)                
+    display += """ 
+              </div>  
+          </div>
+        </div>
     </div>
     </body>
-    </html>
-    """
+    </html>"""
+  
     with open("templates/label_list.html", "w") as text_file:
         text_file.write(display)

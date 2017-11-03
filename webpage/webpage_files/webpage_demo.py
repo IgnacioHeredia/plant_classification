@@ -34,7 +34,7 @@ label_list_to_html(os.path.join(homedir, 'model_files', 'data', 'synsets.txt'))
 
 @app.route('/')
 def intmain():
-    return render_template("main_page.html")
+    return render_template("index.html")
 
 
 @app.route('/label_list.html/')
@@ -59,7 +59,7 @@ def url_post():
         return redirect(url_for('intmain'))
     
     if message['status'] == 'OK':
-        return render_template('response_page.html', predictions=message)
+        return render_template('results.html', predictions=message)
 
 
 @app.route('/local_upload', methods=['POST'])
@@ -73,7 +73,7 @@ def local_post():
         return redirect(url_for('intmain'))
     
     if message['status'] == 'OK':
-        return render_template('response_page.html', predictions=message)
+        return render_template('results.html', predictions=message)
     
 
 @app.route('/api', methods=['POST'])
