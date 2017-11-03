@@ -18,7 +18,7 @@ This has been tested in Ubuntu 14.04 with Python 2.7.12 with the Anaconda 4.2.0 
 ## Resusing this framework
 This framework is quite flexible to retrain a ResNet50 with your image dataset (in `.jpg` format). 
 
-####1) Providing the dataset files
+####1) Providing the dataset files####
 
 First you need add to the `./data/data_splits` path the files:
 
@@ -36,11 +36,11 @@ First you need add to the `./data/data_splits` path the files:
 The `train.txt`, `val.txt` and `test.txt` files associate an image to a label number (that has to *start at zero*). The `synsets.txt` file translates those label numbers to label names. Finally the `tags.txt` enables you to provide a tag to each training image to custom the data augmentation operations you apply to each image (see  the docstring of the `data_augmentation` function in the `./scripts/data_utils.py` file).
 You can find examples of of these files at  `./data/data_splits/dataset_demo`.
 
-####2) Downloading the pretrained model
+####2) Downloading the pretrained model####
 You have to download the Lasagne Model Zoo pretrained weights with ImageNet from [here](https://s3.amazonaws.com/lasagne/recipes/pretrained/imagenet/resnet50.pkl) and copy them to `./data/data_splits/pretrained_weights`.
 
 
-####3) Launching the training
+####3) Launching the training####
 Then you can launch the training executing `./scripts/train_runfile.py` once you have *updated the parameters* of the training inside the script (like the number of epochs, the folder path containing your images, etc). If you want to train with gpu you should create a `.theanorc` file in your `~` dir with a content similar to the following: 
 ```
 [global]
