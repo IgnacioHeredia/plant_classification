@@ -181,7 +181,7 @@ def data_augmentation(im_list, mode='standard', tags=None, params=None, im_size=
 
         if params['pixel_noise']:
             
-            #not used by defaul as it does not seem to improve much the performance,
+            #not used by default as it does not seem to improve much the performance,
             #but more than DOUBLES the data augmentation processing time.
             
             # Color

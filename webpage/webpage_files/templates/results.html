@@ -30,17 +30,15 @@
   <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
 
     <script>
-        
-    //var predictions = {"info": ["99 images in DB", "35 images in DB", "67 images in DB", "49 images in DB", "47 images in DB"], "status": "OK", "google_images_link": ["https://www.google.es/search?q=Rosa+chinensis&tbm=isch", "https://www.google.es/search?q=Erythrina+crista-galli&tbm=isch", "https://www.google.es/search?q=Tulipa+agenensis&tbm=isch", "https://www.google.es/search?q=Gladiolus+dubius&tbm=isch", "https://www.google.es/search?q=Spathodea+campanulata&tbm=isch"], "pred_prob": [0.313213586807251, 0.22123542428016663, 0.037396140396595, 0.033636994659900665, 0.02710902690887451], "pred_lab": ["Rosa chinensis", "Erythrina crista-galli", "Tulipa agenensis", "Gladiolus dubius", "Spathodea campanulata"], "wikipedia_link": ["https://en.wikipedia.org/wiki/Rosa_chinensis", "https://en.wikipedia.org/wiki/Erythrina_crista-galli", "https://en.wikipedia.org/wiki/Tulipa_agenensis", "https://en.wikipedia.org/wiki/Gladiolus_dubius", "https://en.wikipedia.org/wiki/Spathodea_campanulata"]}
-    
+
     var predictions = {{ predictions|tojson }};
     var text = "";
     var i;
     for (i = 0; i < predictions.pred_lab.length; i++) {
         text += '<b>' + (i+1) + '.</b> &nbsp; ' + predictions.pred_lab[i]  + ' &nbsp; | &nbsp; <i>' + Math.round(predictions.pred_prob[i] * 100) + '</i> %';
-        text += '<div class="comments">'//<b>Info</b><br> ';
-        text += '<a href="' + predictions.google_images_link[i] + '">Images</a> | ';
-        text += '<a href="' + predictions.wikipedia_link[i] + '">Wikipedia</a> <br>';     
+        text += '<div class="comments">'
+        text += '<a target="_blank" href="' + predictions.google_images_link[i] + '">Images</a> | ';
+        text += '<a target="_blank" href="' + predictions.wikipedia_link[i] + '">Wikipedia</a> <br>';     
         text += predictions.info[i];
         text += '</div><br>';
     }
